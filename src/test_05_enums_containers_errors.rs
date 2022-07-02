@@ -14,7 +14,7 @@ impl Tuple {
         }
     }
 
-    fn from_integer_vector(vec: Vec<i32>) -> Result<Tuple, String> {
+    fn from_integer_vector(vec: &Vec<i32>) -> Result<Tuple, String> {
         match vec.len() {
             2 => Ok(Tuple::TwoTuple(TwoTupleStruct(vec[0], vec[1]))),
             3 => Ok(Tuple::ThreeTuple(ThreeTupleStruct(vec[0], vec[1], vec[2]))),
@@ -35,7 +35,7 @@ fn average_of_sum(vector: &Vec<Tuple>) -> Option<f32> {
     }
 }
 
-fn main() {
+pub fn main() {
     let tuple1 = Tuple::TwoTuple(TwoTupleStruct(2, 3));
     let tuple2 = Tuple::ThreeTuple(ThreeTupleStruct(4, 5, 6));
     let tuple_vec = vec![tuple1, tuple2];
@@ -48,7 +48,7 @@ fn main() {
         average_of_sum(&tuple_vec).unwrap()
     );
 
-    let tuple_length_5 = Tuple::from_integer_vector(vec![1, 2, 3, 4, 5]);
+    let tuple_length_5 = Tuple::from_integer_vector(&vec![1, 2, 3, 4, 5]);
     if let Err(error_message) = tuple_length_5 {
         println!("Error! {}", error_message);
     }
