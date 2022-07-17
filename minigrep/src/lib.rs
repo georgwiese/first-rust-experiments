@@ -12,18 +12,42 @@ impl Config {
         if args.len() == 3 {
             let filename = args[1].clone();
             let query = args[2].clone();
-            Ok(Config{filename, query})
+            Ok(Config { filename, query })
         } else {
             Err("Unexpected number of arguments!")
         }
     }
 }
 
-pub fn run (config: &Config) -> Result<(), Box<dyn Error>>{
-    println!("{:?}", config);
+fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut res = vec![];
+    for line in contents.lines() {
+        if line.contains(query) {
+            res.push(line);
+        }
+    }
+    res
+}
+
+pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&config.filename)?;
-    println!();
-    println!("Content of file:");
-    println!("{}", contents);
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+    }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::search;
+
+    #[test]
+    fn one_result() {
+        let query = "Foo";
+        let contents = "\
+fo foo fooo
+Bar Foo Foo
+foo bar foo";
+        assert_eq!(search(query, contents), vec!["Bar Foo Foo"]);
+    }
 }
