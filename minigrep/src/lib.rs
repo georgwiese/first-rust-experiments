@@ -1,3 +1,4 @@
+use std::env::Args;
 use std::error::Error;
 use std::fs;
 
@@ -8,25 +9,26 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() == 3 {
-            let filename = args[1].clone();
-            let query = args[2].clone();
-            Ok(Config { filename, query })
-        } else {
-            Err("Unexpected number of arguments!")
-        }
+    pub fn new(mut args: Args) -> Result<Config, &'static str> {
+        args.next();
+        let filename = match args.next() {
+            None => return Err("Didn't get a file name"),
+            Some(arg) => arg,
+        };
+        let query = match args.next() {
+            None => return Err("Didn't get a query"),
+            Some(arg) => arg,
+        };
+
+        Ok(Config { filename, query })
     }
 }
 
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut res = vec![];
-    for line in contents.lines() {
-        if line.contains(query) {
-            res.push(line);
-        }
-    }
-    res
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
