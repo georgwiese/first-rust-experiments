@@ -5,15 +5,14 @@ use std::ops::Add;
 use std::thread;
 use std::time::Duration;
 
-fn simulated_expensive_calculation<T>(parameter: &T) -> T
+fn simulated_expensive_calculation<'a, T>(parameter: &'a T) -> T
 where
     T: Display,
-    T: Add<Output = T>,
-    T: Copy,
+    &'a T: Add<&'a T, Output = T>,
 {
     println!("Calculating: {}", parameter);
     thread::sleep(Duration::from_secs(2));
-    return parameter.clone() + *parameter;
+    parameter + parameter
 }
 
 // TODO: How to make simulated_expensive_calculation work for strings too?
@@ -26,7 +25,6 @@ fn simulated_expensive_calculation_string(parameter: &String) -> String {
 struct Cacher<T, P, R>
 where
     T: Fn(&P) -> R,
-    R: Clone,
     P: Hash,
     P: Eq,
 {
@@ -52,7 +50,7 @@ where
         match self.values.get(&parameter) {
             Some(v) => (*v).clone(),
             None => {
-                let v = (self.calculation)(&parameter).clone();
+                let v = (self.calculation)(&parameter);
                 self.values.insert(parameter, v.clone());
                 v
             }
