@@ -7,7 +7,8 @@
 // mod test_07_iterators;
 // mod test_08_pointers;
 // mod test_09_pointers2;
-mod test_10_concurrency;
+// mod test_10_concurrency;
+mod test_11_oop;
 
 fn main() {
     // test_01_hello_cargo::main();
@@ -19,5 +20,6 @@ fn main() {
     // test_07_iterators::main()
     // test_08_pointers::main()
     // test_09_pointers2::main()
-    test_10_concurrency::main()
+    // test_10_concurrency::main()
+    test_11_oop::main()
 }
