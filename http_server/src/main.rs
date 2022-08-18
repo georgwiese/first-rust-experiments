@@ -42,6 +42,7 @@ fn parse_request<'a>(request: &'a str) -> Result<&'a str, ParseError<'a>> {
 }
 
 fn respond(request: Cow<str>) -> String {
+    // TODO: What would be a good way to separate out the error handling?
     let response = match parse_request(request.as_ref()) {
         Ok(requested_resource) => {
             if requested_resource == "/slowpage.html" {
@@ -52,7 +53,8 @@ fn respond(request: Cow<str>) -> String {
                 Ok(html) => format!("HTTP/1.1 200 OK\r\n\r\n{}", html),
                 Err(_) => {
                     eprint!("Resource not found: {}", requested_resource);
-                    String::from("HTTP/1.1 404 not found")
+                    let html = fs::read_to_string("static/404.html").unwrap();
+                    format!("HTTP/1.1 404 not found\r\n\r\n{}", html)
                 }
             }
         }
